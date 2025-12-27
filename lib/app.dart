@@ -120,6 +120,7 @@ class _AppState extends State<App> with TickerProviderStateMixin {
       if (apiResult['status'] == 'success') {
         bool isReal = apiResult['result'] == 'REAL';
         double confidence = (apiResult['pass_rate'] ?? 0.0).toDouble();
+        
 
         if (mounted) {
           setState(() {
@@ -180,9 +181,9 @@ class _AppState extends State<App> with TickerProviderStateMixin {
                 // Header
                 const SizedBox(height: 20),
                 Text(
-                  'AINU Liveness Pro',
+                  'Gsync Liveness Detection',
                   style: TextStyle(
-                    fontSize: 28,
+                    fontSize: 24,
                     fontWeight: FontWeight.bold,
                     foreground: Paint()
                       ..shader = const LinearGradient(
@@ -190,15 +191,15 @@ class _AppState extends State<App> with TickerProviderStateMixin {
                       ).createShader(const Rect.fromLTWH(0.0, 0.0, 200.0, 70.0)),
                   ),
                 ),
-                const SizedBox(height: 8),
+                const SizedBox(height: 5),
                 const Text(
                   'Sensor & Video Fusion Verification',
                   style: TextStyle(
-                    fontSize: 12,
+                    fontSize: 14  ,
                     color: Colors.grey,
                   ),
                 ),
-                const SizedBox(height: 32),
+                const SizedBox(height: 25),
 
                 // Camera Preview Container
                 AspectRatio(
@@ -296,7 +297,7 @@ class _AppState extends State<App> with TickerProviderStateMixin {
                               foregroundColor: Colors.white,
                               padding: const EdgeInsets.symmetric(vertical: 16),
                               shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(16),
+                                borderRadius: BorderRadius.circular(10),
                               ),
                             ),
                             child: const Row(
@@ -354,11 +355,7 @@ class _AppState extends State<App> with TickerProviderStateMixin {
                       Row(
                         children: [
                           Expanded(
-                            child: _buildInfoChip('SESSION ID', '#AX-992384', Colors.white70),
-                          ),
-                          const SizedBox(width: 16),
-                          Expanded(
-                            child: _buildInfoChip('AI ENGINE', 'AINU Server', const Color(0xFF60A5FA)),
+                            child: _buildInfoChip('DETECTION MODEL', 'GRU', const Color(0xFF60A5FA)),
                           ),
                         ],
                       ),
@@ -375,7 +372,7 @@ class _AppState extends State<App> with TickerProviderStateMixin {
 
   Widget _buildInfoChip(String label, String value, Color valueColor) {
     return Container(
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.all(10),
       decoration: BoxDecoration(
         color: const Color(0xFF18181B),
         borderRadius: BorderRadius.circular(16),

@@ -51,7 +51,7 @@ class _GraphPainter extends CustomPainter {
 
   @override
   void paint(Canvas canvas, Size size) {
-    final paint = Paint()..strokeWidth = 2.0..style = PaintingStyle.stroke;
+    final paint = Paint()..strokeWidth = 1.0..style = PaintingStyle.stroke;
     
     // Draw Axis
     canvas.drawLine(Offset(0, size.height/2), Offset(size.width, size.height/2), Paint()..color=Colors.white24);
@@ -66,7 +66,7 @@ class _GraphPainter extends CustomPainter {
     paint.color = color;
     final path = Path();
     final stepX = size.width / (data.length > 1 ? data.length - 1 : 1);
-    const scale = 15.0; // ปรับความสูงกราฟตรงนี้
+    const scale = 12.0; // ปรับความสูงกราฟตรงนี้
 
     for (int i = 0; i < data.length; i++) {
       double py = (size.height / 2) - (data[i] * scale);

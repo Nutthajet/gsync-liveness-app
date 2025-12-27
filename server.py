@@ -16,7 +16,7 @@ app = FastAPI()
 DEVICE = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 MODEL_PATH = 'kyc_model_best.pth'
 SCALER_PATH = 'scaler.pkl'
-FLOW_RESIZE_WIDTH = 240
+FLOW_RESIZE_WIDTH = 480
 SEQ_LEN = 30
 
 # Model Structure (เหมือนตอน Train เป๊ะๆ)
@@ -136,7 +136,7 @@ async def verify(video: UploadFile = File(...), gyroscope: UploadFile = File(...
             scores = model(torch.FloatTensor(X_norm).to(DEVICE)).cpu().numpy().flatten()
             
         pass_rate = (np.sum(scores > 0.85) / len(scores)) * 100
-        result = "REAL" if pass_rate > 60 else "FAKE" if pass_rate < 20 else "UNCERTAIN"
+        result = "REAL" if pass_rate >= 60 else ("FAKE" if pass_rate < 20 else "UNCERTAIN")
         
         return {"status": "success", "result": result, "pass_rate": pass_rate}
         
