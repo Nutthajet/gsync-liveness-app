@@ -84,7 +84,14 @@ lib/generated_plugin_registrant.dart
 .env
 .env.local
 .env.*.local
+.venv/
+venv/
+env/
 
 # API keys and secrets
 **/secrets.dart
 **/api_keys.dart
+
+# กันไฟล์ Model ขนาดใหญ่ (ถ้าไฟล์ .pth ของคุณเกิน 100MB ต้องกันไว้ ไม่งั้น Push ไม่ผ่าน)
+*.pth
+*.pkl

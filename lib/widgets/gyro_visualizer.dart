@@ -1,125 +1,81 @@
 import 'package:flutter/material.dart';
 import '../models/types.dart';
 
-class GyroVisualizer extends StatelessWidget {
+class GyroVisualizer extends StatefulWidget {
   final GyroData data;
+  const GyroVisualizer({super.key, required this.data});
 
-  const GyroVisualizer({
-    super.key,
-    required this.data,
-  });
+  @override
+  State<GyroVisualizer> createState() => _GyroVisualizerState();
+}
 
-  double _normalize(double? val) {
-    if (val == null) return 50.0;
-    // Map -90 to 90 into 0 to 100
-    final clamped = val.clamp(-90.0, 90.0);
-    return ((clamped + 90.0) / 180.0) * 100.0;
+class _GyroVisualizerState extends State<GyroVisualizer> {
+  final List<double> _historyX = [];
+  final List<double> _historyY = [];
+  final List<double> _historyZ = [];
+  final int _limit = 100;
+
+  @override
+  void didUpdateWidget(covariant GyroVisualizer oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    _add(_historyX, widget.data.x);
+    _add(_historyY, widget.data.y);
+    _add(_historyZ, widget.data.z);
+  }
+
+  void _add(List<double> list, double val) {
+    list.add(val);
+    if (list.length > _limit) list.removeAt(0);
   }
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.all(8),
       decoration: BoxDecoration(
-        color: Colors.black.withOpacity(0.4),
+        color: Colors.black54,
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(
-          color: Colors.white.withOpacity(0.1),
-          width: 1,
-        ),
+        border: Border.all(color: Colors.white10),
       ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              const Text(
-                'DEVICE SENSORS',
-                style: TextStyle(
-                  fontSize: 10,
-                  fontWeight: FontWeight.bold,
-                  color: Color(0xFF60A5FA),
-                  letterSpacing: 1.5,
-                ),
-              ),
-              const Icon(
-                Icons.memory,
-                color: Color(0xFF3B82F6),
-                size: 16,
-              ),
-            ],
-          ),
-          const SizedBox(height: 16),
-          _buildSensorBar(
-            label: 'TILT (X)',
-            value: data.beta,
-            color: const Color(0xFF3B82F6),
-          ),
-          const SizedBox(height: 16),
-          _buildSensorBar(
-            label: 'ROLL (Y)',
-            value: data.gamma,
-            color: const Color(0xFF10B981),
-          ),
-          const SizedBox(height: 16),
-          _buildSensorBar(
-            label: 'YAW (Z)',
-            value: data.alpha,
-            color: const Color(0xFFA855F7),
-          ),
-        ],
+      child: CustomPaint(
+        painter: _GraphPainter(_historyX, _historyY, _historyZ),
+        child: Container(),
       ),
-    );
-  }
-
-  Widget _buildSensorBar({
-    required String label,
-    required double? value,
-    required Color color,
-  }) {
-    final normalized = _normalize(value);
-    
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Text(
-              label,
-              style: const TextStyle(
-                fontSize: 10,
-                color: Colors.white70,
-              ),
-            ),
-            Text(
-              value?.toStringAsFixed(1) ?? '0.0',
-              style: const TextStyle(
-                fontSize: 10,
-                color: Colors.white70,
-              ),
-            ),
-          ],
-        ),
-        const SizedBox(height: 4),
-        ClipRRect(
-          borderRadius: BorderRadius.circular(4),
-          child: Container(
-            height: 6,
-            width: double.infinity,
-            color: Colors.white.withOpacity(0.05),
-            child: FractionallySizedBox(
-              alignment: Alignment.centerLeft,
-              widthFactor: normalized / 100,
-              child: Container(
-                color: color,
-              ),
-            ),
-          ),
-        ),
-      ],
     );
   }
 }
 
+class _GraphPainter extends CustomPainter {
+  final List<double> x, y, z;
+  _GraphPainter(this.x, this.y, this.z);
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final paint = Paint()..strokeWidth = 2.0..style = PaintingStyle.stroke;
+    
+    // Draw Axis
+    canvas.drawLine(Offset(0, size.height/2), Offset(size.width, size.height/2), Paint()..color=Colors.white24);
+    
+    _draw(canvas, size, x, Colors.redAccent, paint);
+    _draw(canvas, size, y, Colors.greenAccent, paint);
+    _draw(canvas, size, z, Colors.blueAccent, paint);
+  }
+
+  void _draw(Canvas canvas, Size size, List<double> data, Color color, Paint paint) {
+    if (data.isEmpty) return;
+    paint.color = color;
+    final path = Path();
+    final stepX = size.width / (data.length > 1 ? data.length - 1 : 1);
+    const scale = 15.0; // ปรับความสูงกราฟตรงนี้
+
+    for (int i = 0; i < data.length; i++) {
+      double py = (size.height / 2) - (data[i] * scale);
+      double px = i * stepX;
+      if (i == 0) path.moveTo(px, py); else path.lineTo(px, py);
+    }
+    canvas.drawPath(path, paint);
+  }
+
+  @override
+  bool shouldRepaint(covariant CustomPainter oldDelegate) => true;
+}

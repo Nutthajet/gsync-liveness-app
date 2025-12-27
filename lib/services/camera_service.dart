@@ -24,7 +24,7 @@ class CameraService {
     _controller = CameraController(
       frontCamera,
       ResolutionPreset.high,
-      enableAudio: false,
+      enableAudio: false, // เราไม่ได้ใช้เสียง ปิดไว้ช่วยลดขนาดไฟล์ได้
       imageFormatGroup: Platform.isAndroid
           ? ImageFormatGroup.jpeg
           : ImageFormatGroup.bgra8888,
@@ -32,6 +32,33 @@ class CameraService {
 
     await _controller!.initialize();
   }
+
+  // --- ส่วนที่เพิ่มใหม่สำหรับ Video ---
+  Future<void> startRecording() async {
+    if (_controller == null || !_controller!.value.isInitialized) {
+      return;
+    }
+    if (_controller!.value.isRecordingVideo) {
+      return;
+    }
+    try {
+      await _controller!.startVideoRecording();
+    } catch (e) {
+      throw Exception('Failed to start recording: $e');
+    }
+  }
+
+  Future<XFile?> stopRecording() async {
+    if (_controller == null || !_controller!.value.isRecordingVideo) {
+      return null;
+    }
+    try {
+      return await _controller!.stopVideoRecording();
+    } catch (e) {
+      throw Exception('Failed to stop recording: $e');
+    }
+  }
+  // ------------------------------------
 
   Future<Uint8List> takePicture() async {
     if (_controller == null || !_controller!.value.isInitialized) {
@@ -54,13 +81,5 @@ class CameraService {
 
   void dispose() {
     _controller?.dispose();
-    _controller = null;
   }
-
-  bool get isInitialized => _controller?.value.isInitialized ?? false;
 }
-
-String base64Encode(List<int> bytes) {
-  return base64.encode(bytes);
-}
-
