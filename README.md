@@ -1,129 +1,180 @@
-# AINU Liveness Pro - Flutter App
+# 🛡️ GSync Liveness Detection (Sensor & Video Fusion)
 
-AI-Powered Identity Verification System using Flutter. This app uses camera frames and motion sensor data to verify user liveness and prevent spoofing, powered by Google's Gemini AI.
+An advanced Anti-Spoofing and Liveness Detection system designed to verify human identity securely. This project leverages a multi-modal approach by fusing **Computer Vision** (Facial Analysis) with **Motion Sensor Data** (Gyroscope & Accelerometer) to distinguish between real humans and presentation attacks (Deepfakes, Replay attacks, Printed photos).
 
-## Features
+## 🚀 Features
 
-- 📸 Real-time camera preview
-- 📱 Motion sensor integration (gyroscope, accelerometer, magnetometer)
-- 🤖 AI-powered liveness detection using Gemini 3
-- 🎯 Challenge-based verification (tilt/rotate phone)
-- 📊 Real-time sensor visualization
-- ✨ Beautiful, modern UI
+* **Multi-Modal Fusion:** Combines facial features with device movement patterns for high-accuracy detection.
+* **Deep Learning Engine:** Powered by a GRU/LSTM-based PyTorch model customized for sequential data.
+* **Advanced Feature Extraction:**
+    * **Vision:** Facial Landmarks (MediaPipe), Optical Flow, Eye Aspect Ratio (EAR), Mouth Aspect Ratio (MAR).
+    * **Sensors:** Synchronized Gyroscope & Accelerometer data interpolation.
+* **Real-time Verification:** Fast processing via FastAPI with immediate feedback.
+* **Cross-Platform App:** Mobile application built with Flutter for iOS and Android.
 
-## Prerequisites
+## 🛠️ Tech Stack
 
-- Flutter SDK (>=3.0.0)
-- Dart SDK
-- Android Studio / Xcode (for mobile development)
-- Gemini API Key from [Google AI Studio](https://aistudio.google.com/)
+### Backend (Server)
+* **Language:** Python 3.9+
+* **Framework:** FastAPI, Uvicorn
+* **AI/ML:** PyTorch, MediaPipe, Scikit-learn, OpenCV
+* **Data Processing:** NumPy, Pandas, SciPy
 
-## Setup
+### Frontend (Mobile App)
+* **Framework:** Flutter (Dart)
+* **Key Packages:** `camera`, `sensors_plus`, `http`
 
-1. **Install Flutter dependencies:**
-   ```bash
-   flutter pub get
-   ```
+---
 
-2. **Configure API Key:**
-   
-   You have several options to set your Gemini API key:
-
-   **Option 1: Environment variable (Recommended)**
-   ```bash
-   # For development
-   export GEMINI_API_KEY="your-api-key-here"
-   
-   # Then run
-   flutter run --dart-define=GEMINI_API_KEY=$GEMINI_API_KEY
-   ```
-
-   **Option 2: Modify code directly (Not recommended for production)**
-   Edit `lib/app.dart` and replace the API key initialization:
-   ```dart
-   _geminiService = GeminiLivenessService(apiKey: 'your-api-key-here');
-   ```
-
-   **Option 3: Use flutter_dotenv package**
-   Create a `.env` file in the root directory:
-   ```
-   GEMINI_API_KEY=your-api-key-here
-   ```
-   Then load it in your code using the `flutter_dotenv` package.
-
-3. **Platform-specific setup:**
-
-   **Android:**
-   - Permissions are already configured in `android/app/src/main/AndroidManifest.xml`
-   - Minimum SDK version: 21
-
-   **iOS:**
-   - Permissions are already configured in `ios/Runner/Info.plist`
-   - Minimum iOS version: 12.0
-
-## Running the App
+## 📂 Project Structure
 
 ```bash
-# Run on connected device/emulator
-flutter run
+GSync-Liveness-App/
+├── android/                # Android native configuration
+├── lib/                    # Flutter Source Code
+│   ├── main.dart           # UI & App Logic
+│   └── api_service.dart    # API Integration Logic
+├── detection_model/        # Model Artifacts
+│   ├── kyc_model_best.pth  # Trained PyTorch Model
+│   └── scaler.pkl          # Data Scaler
+├── server.py               # Main Python Server
+├── requirements.txt        # Python Dependencies
+└── README.md               # Documentation
 
-# Run with API key from environment
-flutter run --dart-define=GEMINI_API_KEY=your-api-key-here
+## ⚙️ Installation & Setup
 
-# Build release APK (Android)
-flutter build apk --release
+Follow these steps to get the system running locally.
 
-# Build release IPA (iOS)
-flutter build ios --release
-```
+### 1️⃣ Backend Setup (Python Server)
 
-## Project Structure
+1.  **Navigate to the project directory:**
+    ```bash
+    cd path/to/project
+    ```
 
-```
-lib/
-├── main.dart              # App entry point
-├── app.dart               # Main app widget with state management
-├── models/
-│   └── types.dart        # Data models (GyroData, Challenge, etc.)
-├── services/
-│   ├── camera_service.dart    # Camera initialization and capture
-│   ├── sensor_service.dart    # Motion sensor data collection
-│   └── gemini_service.dart    # Gemini API integration
-└── widgets/
-    └── gyro_visualizer.dart   # Sensor data visualization widget
-```
+2.  **Create and Activate Virtual Environment (Recommended):**
+    ```bash
+    # Windows
+    python -m venv .venv
+    .venv\Scripts\activate
 
-## How It Works
+    # Mac/Linux
+    python3 -m venv .venv
+    source .venv/bin/activate
+    ```
 
-1. **Camera Initialization**: User grants camera permission and front camera starts
-2. **Sensor Listening**: Motion sensors (accelerometer, gyroscope, magnetometer) start tracking device orientation
-3. **Challenge Selection**: Random challenge is selected (tilt up/down, rotate left/right)
-4. **Verification**: After 4 seconds, camera frame and sensor data are captured
-5. **AI Analysis**: Gemini AI analyzes the image and sensor data to verify liveness
-6. **Result**: User receives verification result (success/failed) with reasoning
+3.  **Install Dependencies:**
+    Create a `requirements.txt` file (or use the command below) to install necessary libraries:
+    ```bash
+    pip install fastapi uvicorn torch numpy opencv-python pandas joblib mediapipe scipy python-multipart scikit-learn
+    ```
 
-## Technologies Used
+4.  **Place Model Files:**
+    Ensure your trained model files are in the `detection_model/` folder:
+    * `detection_model/kyc_model_best.pth`
+    * `detection_model/scaler.pkl`
 
-- **Flutter**: Cross-platform UI framework
-- **camera**: Camera access and preview
-- **sensors_plus**: Motion sensor data
-- **http**: API communication with Gemini
-- **Google Gemini AI**: Liveness detection and analysis
+5.  **Run the Server:**
+    ```bash
+    python server.py
+    ```
+    * The server will start at `http://0.0.0.0:8000`
+    * You should see `🚀 SERVER READY!` in the terminal.
 
-## Notes
+### 2️⃣ Frontend Setup (Flutter App)
 
-- The app requires camera and motion sensor permissions
-- Internet connection is required for AI verification
-- Sensor data is calculated from accelerometer, gyroscope, and magnetometer fusion
-- The app is designed for portrait orientation
+1.  **Install Flutter Dependencies:**
+    ```bash
+    flutter pub get
+    ```
 
-## Troubleshooting
+2.  **⚠️ Configure API Endpoint (Crucial Step):**
+    Open `lib/api_service.dart`. You **must** change `localhost` to your computer's local IP address so the mobile device can connect.
+    * **Windows:** Run `ipconfig` in terminal.
+    * **Mac/Linux:** Run `ifconfig` in terminal.
+    
+    ```dart
+    // lib/api_service.dart
+    
+    // ❌ Don't use localhost or 127.0.0.1
+    // ✅ Use your LAN IP (e.g., 192.168.1.105, 10.x.x.x)
+    static const String baseUrl = '[http://192.168.1.](http://192.168.1.)XXX:8000'; 
+    ```
 
-- **Camera not working**: Ensure camera permissions are granted in device settings
-- **Sensors not working**: Some emulators don't support sensors - test on a real device
-- **API errors**: Verify your Gemini API key is correct and has proper permissions
-- **Build errors**: Run `flutter clean` and `flutter pub get`
+3.  **Android Network Configuration:**
+    To allow HTTP connections (local development), ensure `android/app/src/main/AndroidManifest.xml` has:
+    ```xml
+    <application
+        android:label="GSync Liveness"
+        android:usesCleartextTraffic="true"  ... >
+    ```
 
-## License
+4.  **Run the App:**
+    ```bash
+    flutter run
+    ```
 
-This project is private and proprietary.
+---
+
+## 📡 API Usage
+
+### `POST /verify`
+The main endpoint to verify liveness.
+
+* **URL:** `http://YOUR_IP:8000/verify`
+* **Content-Type:** `multipart/form-data`
+* **Body Parameters:**
+    * `video`: The video file (`.mp4`, `.temp`).
+    * `gyroscope`: CSV file (`x, y, z, seconds_elapsed`).
+    * `accelerometer`: CSV file (`x, y, z, seconds_elapsed`).
+
+* **Success Response (JSON):**
+    ```json
+    {
+      "status": "success",
+      "result": "REAL",
+      "confidence": "MEDIUM",
+      "pass_rate": 56.4,
+      "score": 0.5817,
+      "metrics": {
+        "pass_rate": 56.4,
+        "mean_score": 0.5817,
+        "median_score": 0.9961
+      }
+    }
+    ```
+
+---
+
+## 🔧 Troubleshooting / Common Issues
+
+### ❌ 1. Connection Refused / Connection Timed Out
+* **Symptoms:** App spins indefinitely or shows `SocketException`.
+* **Fix:**
+    1.  **Firewall:** Windows Firewall often blocks port 8000. Turn it off temporarily or add an Inbound Rule for Python.
+    2.  **Network:** Phone and Computer must be on the **same Wi-Fi**.
+    3.  **IP Address:** Double-check the IP in `api_service.dart`. If using Hotspot, the IP often changes.
+
+### ❌ 2. App Shows "0.0%" Result
+* **Symptoms:** Server logs show success, but the app displays 0% confidence.
+* **Cause:** JSON key mismatch. The app expects `pass_rate` at the root level, but the server sends it inside `metrics`.
+* **Fix:** Update `server.py` to return flat keys:
+    ```python
+    return {
+        "status": "success",
+        "pass_rate": pass_rate,  # Add this
+        "score": mean_score,     # Add this
+        "metrics": { ... }
+    }
+    ```
+
+### ⚠️ 3. Feature Mismatch Warning (23 vs 25)
+* **Symptoms:** Server log shows `⚠️ Feature mismatch: Data has 23, Model needs 25`.
+* **Cause:** The model expects EAR (Eye Aspect Ratio) and MAR (Mouth Aspect Ratio) features, but they are missing from extraction.
+* **Fix:** The server currently auto-pads these with zeros to prevent crashing. for better accuracy, implement EAR/MAR calculation in `server.py`.
+
+---
+
+## 📜 License
+
+This project is open-source and available for educational purposes.

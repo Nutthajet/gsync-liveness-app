@@ -3,8 +3,8 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 
 class ApiService {
-  // ⚠️ เปลี่ยน 192.168.1.105 เป็น IP เครื่องที่รัน Python Server
-  static const String baseUrl = 'http://10.47.138.87:8000';
+  // ⚠️ TODO: Change this to your computer's IP address
+  static const String baseUrl = 'http://YOUR_IPV4_ADDRESS:8000';
 
   Future<Map<String, dynamic>> verifyLiveness({
     required File videoFile,
