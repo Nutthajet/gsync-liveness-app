@@ -1,0 +1,7 @@
+{
+  "name": "Gsync Liveness Detection",
+  "description": "A web application that captures video and device motion sensors simultaneously for liveness detection, ported from a Flutter mobile app. It features a cyberpunk/dark mode aesthetic and is designed to be compatible with mobile browsers, including specific permission handling for iOS.",
+  "requestFramePermissions": [
+    "camera"
+  ]
+}
