@@ -571,7 +571,7 @@ async def verify(
         print(f"   Median score: {np.median(scores):.3f}")
         
         # Calculate metrics
-        threshold = 0.80
+        threshold = 0.60
         pass_count = np.sum(scores > threshold)
         pass_rate = float((pass_count / len(scores)) * 100)
         mean_score = float(np.mean(scores))
@@ -579,13 +579,13 @@ async def verify(
         std_score = float(np.std(scores))
         
         # Determine result
-        if pass_rate >= 80:
+        if pass_rate >= 70:
             result = "REAL"
             confidence = "HIGH"
-        elif pass_rate >= 60:
+        elif pass_rate >= 50:
             result = "REAL"
             confidence = "MEDIUM"
-        elif pass_rate >= 40:
+        elif pass_rate >=30:
             result = "UNCERTAIN"
             confidence = "LOW"
         else:
