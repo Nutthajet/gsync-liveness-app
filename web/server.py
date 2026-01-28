@@ -320,8 +320,21 @@ def process_data(video_path, gyro_path, accel_path):
         return None
     
     total_frames = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
-    fps = cap.get(cv2.CAP_PROP_FPS)
-    print(f"📊 Video info: {total_frames} frames, {fps:.1f} FPS")
+    
+    # ถ้าอ่านไม่ได้ หรือค่าติดลบ หรือเป็น 0 (แปลว่า Header เสีย)
+    if total_frames <= 0 or total_frames > 1000000: # กันเลขมั่วๆ ที่เยอะเกินจริง
+        print("⚠️ Warning: Could not read frame count from header. Counting manually...")
+        total_frames = 0
+        while True:
+            ret, _ = cap.read()
+            if not ret:
+                break
+            total_frames += 1
+        
+        print(f"✅ Manual count result: {total_frames} frames")
+        
+        # สำคัญมาก! นับเสร็จต้องกรอวิดีโอกลับไปจุดเริ่มต้น ไม่งั้นข้างล่างจะไม่มีภาพให้อ่าน
+        cap.set(cv2.CAP_PROP_POS_FRAMES, 0)
     
     # Create timestamps for video frames
     timestamps = np.linspace(t_g.min(), t_g.max(), total_frames)
