@@ -334,7 +334,8 @@ def process_data(video_path, gyro_path, accel_path):
         print(f"✅ Manual count result: {total_frames} frames")
         
         # สำคัญมาก! นับเสร็จต้องกรอวิดีโอกลับไปจุดเริ่มต้น ไม่งั้นข้างล่างจะไม่มีภาพให้อ่าน
-        cap.set(cv2.CAP_PROP_POS_FRAMES, 0)
+    cap.release()  # ปล่อยไฟล์เดิม
+    cap = cv2.VideoCapture(video_path) # โหลดใหม่อีกรอบ พร้อมเริ่มจาก 0
     
     # Create timestamps for video frames
     timestamps = np.linspace(t_g.min(), t_g.max(), total_frames)
@@ -359,7 +360,8 @@ def process_data(video_path, gyro_path, accel_path):
         h, w = curr_gray.shape
         
         # Process with MediaPipe
-        results = mp_face_mesh.process(cv2.cvtColor(frame, cv2.COLOR_BGR2RGB))
+        image = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB) 
+        results = mp_face_mesh.process(image) # ส่ง image (RGB) เข้าไป อย่าส่ง frame
         
         if results.multi_face_landmarks:
             lm = results.multi_face_landmarks[0].landmark
