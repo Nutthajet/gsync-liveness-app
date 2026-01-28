@@ -260,7 +260,7 @@ const App: React.FC = () => {
       setStatus(Status.PROCESSING);
       
       // 🔴 ตรวจสอบ URL: ถ้าเทสบนคอมใช้ localhost:8000 / ถ้าเทสมือถือใช้ Ngrok URL
-      const response = await fetch('https://malika-shedable-recollectively.ngrok-free.dev/verify', { 
+      const response = await fetch('https://a3a8df720985.ngrok-free.app/verify', { 
         method: 'POST',
         headers: {
             'ngrok-skip-browser-warning': 'true',
@@ -286,8 +286,8 @@ const App: React.FC = () => {
           setApiResult(result);
           setStatus(Status.FAILED);
           // ดึงคะแนนความมั่นใจมาโชว์ (ถ้ามี)
-          const score = result.score || result.confidence || 0;
-          setError(`Fake Detected (Score: ${Number(score).toFixed(4)})`);
+          const pass_rate = result.pass_rate || result.confidence || 0;
+          setError(`Fake Detected (pass_rate: ${Number(pass_rate).toFixed(4)})`);
       }
 
     } catch (error: any) {
