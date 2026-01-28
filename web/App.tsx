@@ -260,7 +260,7 @@ const App: React.FC = () => {
       setStatus(Status.PROCESSING);
       
       // 🔴 ตรวจสอบ URL: ถ้าเทสบนคอมใช้ localhost:8000 / ถ้าเทสมือถือใช้ Ngrok URL
-      const response = await fetch('https://malika-shedable-recollectively.ngrok-free.dev/verify', { 
+      const response = await fetch('https://malika-shedable-recollectively.ngrok-free.dev', { 
         method: 'POST',
         headers: {
             'ngrok-skip-browser-warning': 'true',
