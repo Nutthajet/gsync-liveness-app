@@ -181,21 +181,8 @@ const App: React.FC = () => {
             height: { ideal: 480 }
         }, 
         audio: false 
-      })
-      .then((stream) => {
-      // --------------------------------------------------------
-      // 🔥 เพิ่มส่วนนี้: สั่ง Hardware ให้ Zoom เข้า 1.5 เท่า - 2 เท่า
-      // --------------------------------------------------------
-      const track = stream.getVideoTracks()[0];
-      const capabilities = track.getCapabilities();
-
-      // เช็คว่ามือถือเครื่องนี้รองรับการสั่ง Zoom ไหม
-      if ('zoom' in capabilities) {
-          // zoom: 1.0 คือปกติ, ลองใส่ 1.5 หรือ 2.0 ดูครับ
-          track.applyConstraints({
-              advanced: [{ zoom: 1.5 }] 
-          }).catch(e => console.log("Zoom not supported on this specific setting", e));
-      }
+      });
+      
       console.log("✅ Camera Stream Acquired");
 
       // 3. เปลี่ยนสถานะเป็น READY เพื่อให้ React วาด <video> ออกมา
@@ -203,6 +190,16 @@ const App: React.FC = () => {
 
       // 4. รอเล็กน้อยให้ <video> โผล่มา แล้วค่อยยัด Stream ใส่ (แก้จอดำ)
       setTimeout(() => {
+        const track = stream.getVideoTracks()[0];
+        const capabilities = track.getCapabilities();
+
+        // เช็คว่ามือถือเครื่องนี้รองรับการสั่ง Zoom ไหม
+        if ('zoom' in capabilities) {
+            // zoom: 1.0 คือปกติ, ลองใส่ 1.5 หรือ 2.0 ดูครับ
+            track.applyConstraints({
+                advanced: [{ zoom: 1.5 }] 
+            }).catch(e => console.log("Zoom not supported on this specific setting", e));
+        }
         if (videoRef.current) {
             videoRef.current.srcObject = stream;
             // บังคับเล่น
