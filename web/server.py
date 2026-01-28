@@ -358,7 +358,7 @@ def process_data(video_path, gyro_path, accel_path):
         h, w, _ = frame.shape
         
         # กำหนดว่าจะซูมเข้าไปแค่ไหน (0.5 = ซูม 2 เท่า, 0.6 = ซูมน้อยลงหน่อย)
-        zoom_factor = 0.7 
+        zoom_factor = 0.67 
         
         new_h, new_w = int(h * zoom_factor), int(w * zoom_factor)
         
